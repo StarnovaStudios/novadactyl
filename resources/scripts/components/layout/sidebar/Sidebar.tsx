@@ -1,5 +1,5 @@
 import type { IconSvgElement } from '@hugeicons/react';
-import { memo, type RefObject, useCallback, useEffect, useMemo } from 'react';
+import { memo, type ReactNode, type RefObject, useCallback, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { cn } from '@/lib/utils';
@@ -25,9 +25,10 @@ interface SidebarProps {
     bottomNavItems?: NavItem[];
     className?: string;
     onNavClick?: () => void;
+    header?: ReactNode;
 }
 
-export default memo(function Sidebar({ navItems, bottomNavItems = [], className, onNavClick }: SidebarProps) {
+export default memo(function Sidebar({ navItems, bottomNavItems = [], className, onNavClick, header }: SidebarProps) {
     const location = useLocation();
     const allNavItems = useMemo(() => [...navItems, ...bottomNavItems], [navItems, bottomNavItems]);
 
@@ -110,6 +111,7 @@ export default memo(function Sidebar({ navItems, bottomNavItems = [], className,
                 className,
             )}
         >
+            {header && <div className='sidebar-header h-10 mb-4'>{header}</div>}
             <div className='sidebar-indicator absolute bg-mocha-400 border border-mocha-300 left-8 rounded-xl pointer-events-none' />
             <ul className='sidebar-nav-main flex flex-col text-sm'>
                 {navItems.map((item, index) => {

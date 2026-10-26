@@ -161,7 +161,12 @@ const AppHeader = ({ serverId, admin }: AppHeaderProps) => {
             <div className='flex grow shrink-0 items-center gap-2'>
                 <MobileSidebarToggle />
                 <SidebarLogo admin={admin} />
-                {serverId && <ServerSwitcher />}
+                {/* Desktop shows the switcher in the sidebar instead. */}
+                {serverId && (
+                    <div className='min-w-0 max-w-56 lg:hidden'>
+                        <ServerSwitcher />
+                    </div>
+                )}
             </div>
             <HeaderActions />
             <div className='basis-full md:basis-auto flex items-center gap-1.5 sm:gap-2 justify-end min-w-0 overflow-visible md:grow md:shrink-0'>

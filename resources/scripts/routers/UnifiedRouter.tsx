@@ -43,6 +43,7 @@ import Sidebar from '@/components/layout/sidebar/Sidebar';
 import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
 import InstallListener from '@/components/server/InstallListener';
 import ServerIsland from '@/components/server/ServerIsland';
+import ServerSwitcher from '@/components/server/ServerSwitcher';
 import TransferListener from '@/components/server/TransferListener';
 import WebsocketHandler from '@/components/server/WebsocketHandler';
 import { HeaderProvider } from '@/contexts/HeaderContext';
@@ -364,7 +365,12 @@ const UnifiedRouter = () => {
                         <AppHeader serverId={isServerRoute ? serverInternalId?.toString() : undefined} />
 
                         <div className='flex flex-col lg:flex-row h-full w-full overflow-hidden relative'>
-                            <Sidebar navItems={navItems} bottomNavItems={bottomNavItems} className='hidden lg:flex' />
+                            <Sidebar
+                                navItems={navItems}
+                                bottomNavItems={bottomNavItems}
+                                className='hidden lg:flex'
+                                header={isServerRoute ? <ServerSwitcher /> : undefined}
+                            />
                             <MobileSidebar navItems={navItems} bottomNavItems={bottomNavItems} />
                             <BottomNav items={navItems} />
 

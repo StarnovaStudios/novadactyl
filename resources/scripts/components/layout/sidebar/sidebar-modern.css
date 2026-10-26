@@ -87,6 +87,15 @@ body[data-sidebar-minimized="false"] .sidebar-logo-name {
     margin-left: auto;
 }
 
+body[data-sidebar-minimized="true"] .sidebar-header {
+    display: none;
+}
+
+/* The indicator is positioned from the top of the sidebar, so it starts below the header (h-10 + mb-4). */
+body[data-sidebar-minimized="false"] .sidebar-container:has(.sidebar-header) {
+    --sidebar-initial-top: 56px;
+}
+
 .sidebar-indicator {
     height: var(--indicator-height);
     opacity: 0;

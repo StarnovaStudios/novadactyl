@@ -16,7 +16,7 @@ import {
 import { useTranslation } from '@/i18n/I18nProvider';
 import { ServerContext } from '@/state/server';
 
-// Header dropdown that jumps to another server, listed under the user's groups.
+// Sidebar dropdown that jumps to another server, listed under the user's groups.
 const ServerSwitcher = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -59,7 +59,7 @@ const ServerSwitcher = () => {
                 <button
                     type='button'
                     aria-label={t('server.switcher.label')}
-                    className='flex h-8 min-w-0 max-w-56 items-center gap-2 rounded-full border border-[#ffffff12] px-3 text-sm font-semibold text-cream-50 hover:bg-[#ffffff11] cursor-pointer select-none'
+                    className='flex h-10 w-full min-w-0 items-center justify-between gap-2 rounded-xl border border-[#ffffff12] px-3 text-sm font-semibold text-cream-50 hover:bg-[#ffffff11] cursor-pointer select-none'
                 >
                     <span className='truncate'>{name}</span>
                     <ChevronDown width={16} height={16} fill='currentColor' className='shrink-0 opacity-60' />
@@ -68,7 +68,7 @@ const ServerSwitcher = () => {
             <DropdownMenuContent
                 align='start'
                 sideOffset={6}
-                className='z-99999 w-[268px] max-h-[60vh] overflow-y-auto select-none'
+                className='z-99999 w-(--radix-dropdown-menu-trigger-width) max-h-[60vh] overflow-y-auto select-none'
             >
                 {!servers && (
                     <DropdownMenuLabel className='font-normal opacity-60'>{t('common.loading')}</DropdownMenuLabel>
