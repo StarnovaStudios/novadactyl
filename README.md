@@ -15,7 +15,9 @@
 
 <br/>
 
-<h1 align="center">Hydrodactyl</h1>
+<h1 align="center">Novadactyl</h1>
+
+<p align="center">Starnova Studios' fork of <a href="https://github.com/BlueprintFramework/hydrodactyl">Hydrodactyl</a>.</p>
 
 <p align="center">
   <a href="https://github.com/BlueprintFramework/hydrodactyl/actions/workflows/dev-build.yaml">
@@ -29,6 +31,30 @@
 </p>
 
 <br/>
+
+## What Novadactyl adds
+
+Novadactyl tracks upstream Hydrodactyl releases and adds a few changes on top:
+
+- **Monaco file editor** — the server file editor uses Monaco (the VS Code editor) instead of CodeMirror. Monaco is bundled with the panel, so nothing loads from a CDN.
+- **Server island** — a floating bar at the bottom of every server page except the console, with the server's name and status, live stats, power actions, and a console you can pop out without leaving the page.
+
+### Docker image
+
+Images are published to `ghcr.io/starnovastudios/novadactyl`. Use it in place of the upstream image in your `docker-compose.yml`:
+
+```yaml
+panel:
+    image: ghcr.io/starnovastudios/novadactyl:latest
+```
+
+Pin a specific tag in production. Tags follow the upstream release they are built on: `v6.4.2` is upstream v6.4.2 with the changes above, and `v6.4.2-2` adds Novadactyl-only changes on top of it.
+
+### Releases
+
+Pushing a git tag `novadactyl-vX.Y.Z[-N]` builds and publishes `ghcr.io/starnovastudios/novadactyl:vX.Y.Z[-N]` and `:latest` (see [`.github/workflows/novadactyl.yaml`](.github/workflows/novadactyl.yaml)). Set the same version in `config/app.php` first so the panel reports it. To pick up a new upstream release, merge its tag into `main` and tag the result.
+
+## About Hydrodactyl
 
 Hydrodactyl is a modern, performance-focused game server management panel forked from Pterodactyl. It delivers smaller bundles, faster builds, and an accessible, reimagined interface.
 
@@ -84,6 +110,7 @@ Hydrodactyl is built upon the work of previous open-source projects and their co
 - **Pyrodactyl™**: Copyright © 2023–2025 Pyro Inc. and contributors.
 - **Pyrodactyl™**: Copyright © 2025–2026 Pyrodactyl-oss and contributors.
 - **Hydrodactyl**: Copyright © 2026–present Naterfute, Blueprint Framework, and contributors.
+- **Novadactyl** (changes on top of Hydrodactyl): Copyright © 2026–present Starnova Studios and contributors.
 
 All original copyright notices, license notices, and attributions must remain intact when redistributing this software.
 
