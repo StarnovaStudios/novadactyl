@@ -2652,6 +2652,9 @@
             "expand": "Expand server bar",
             "minimize": "Minimize server bar",
             "open_console": "Open console"
+        },
+        "switcher": {
+            "label": "Switch server"
         }
     },
     "setup": {

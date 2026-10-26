@@ -2,6 +2,7 @@ import { LayoutSideContent } from '@gravity-ui/icons';
 import { Fragment, memo } from 'react';
 import { NavLink } from 'react-router-dom';
 import Logo from '@/components/elements/HydroLogo';
+import ServerSwitcher from '@/components/server/ServerSwitcher';
 import { Button } from '@/components/ui/button';
 import { useHeader } from '@/contexts/HeaderContext';
 import { useSidebar } from '@/contexts/SidebarContext';
@@ -160,6 +161,7 @@ const AppHeader = ({ serverId, admin }: AppHeaderProps) => {
             <div className='flex grow shrink-0 items-center gap-2'>
                 <MobileSidebarToggle />
                 <SidebarLogo admin={admin} />
+                {serverId && <ServerSwitcher />}
             </div>
             <HeaderActions />
             <div className='basis-full md:basis-auto flex items-center gap-1.5 sm:gap-2 justify-end min-w-0 overflow-visible md:grow md:shrink-0'>
