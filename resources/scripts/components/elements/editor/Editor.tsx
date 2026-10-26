@@ -1,40 +1,9 @@
-import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
-import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
-import {
-    bracketMatching,
-    defaultHighlightStyle,
-    foldGutter,
-    foldKeymap,
-    indentOnInput,
-    indentUnit,
-    LanguageDescription,
-    type LanguageSupport,
-    syntaxHighlighting,
-} from '@codemirror/language';
+import { LanguageDescription } from '@codemirror/language';
 import { languages } from '@codemirror/language-data';
-import { lintKeymap } from '@codemirror/lint';
-import { highlightSelectionMatches, search, searchKeymap } from '@codemirror/search';
-import type { Extension } from '@codemirror/state';
-import { Compartment, EditorState } from '@codemirror/state';
-import {
-    crosshairCursor,
-    drawSelection,
-    dropCursor,
-    EditorView,
-    highlightActiveLine,
-    highlightActiveLineGutter,
-    highlightSpecialChars,
-    highlightWhitespace,
-    keymap,
-    lineNumbers,
-    rectangularSelection,
-    scrollPastEnd,
-} from '@codemirror/view';
+import * as monaco from 'monaco-editor';
 import type { CSSProperties } from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAppearance } from '@/contexts/AppearanceContext';
-
-import { ayuMirageHighlightStyle, ayuMirageTheme } from './theme';
 
 function findLanguageByFilename(filename: string): LanguageDescription | undefined {
     const language = LanguageDescription.matchFilename(languages, filename);
@@ -45,52 +14,32 @@ function findLanguageByFilename(filename: string): LanguageDescription | undefin
     return undefined;
 }
 
-const defaultExtensions: Extension = [
-    lineNumbers(),
-    highlightActiveLineGutter(),
-    highlightSpecialChars(),
-    history(),
-    foldGutter(),
-    drawSelection(),
-    dropCursor(),
-    EditorState.allowMultipleSelections.of(true),
-    indentOnInput(),
-    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-    bracketMatching(),
-    closeBrackets(),
-    autocompletion(),
-    rectangularSelection(),
-    crosshairCursor(),
-    highlightActiveLine(),
-    highlightSelectionMatches(),
-    highlightWhitespace(),
-    // Keymap alone does nothing visible until search state exists. Ctrl-F opens this panel.
-    search({ top: true }),
-    EditorView.lineWrapping,
-    scrollPastEnd(),
-    keymap.of([
-        ...closeBracketsKeymap,
-        ...defaultKeymap,
-        ...searchKeymap,
-        ...historyKeymap,
-        ...foldKeymap,
-        ...completionKeymap,
-        ...lintKeymap,
-        indentWithTab,
-    ]),
-    EditorState.tabSize.of(4),
-    // Spaces, not a literal tab. Game configs (yaml, json, properties) almost all want this,
-    // and existing tab characters in a file are left alone.
-    indentUnit.of('    '),
-];
+// The language picker still lists CodeMirror's language descriptions; map one to a Monaco
+// language by name or alias first, then by file extension.
+function toMonacoLanguage(language: LanguageDescription | undefined): string {
+    if (language === undefined) {
+        return 'plaintext';
+    }
+
+    const names = [language.name, ...language.alias].map((name) => name.toLowerCase());
+    const extensions = language.extensions.map((extension) => `.${extension}`);
+    const monacoLanguages = monaco.languages.getLanguages();
+
+    return (
+        monacoLanguages.find(
+            (l) => names.includes(l.id) || l.aliases?.some((alias) => names.includes(alias.toLowerCase())),
+        )?.id ??
+        monacoLanguages.find((l) => l.extensions?.some((extension) => extensions.includes(extension)))?.id ??
+        'plaintext'
+    );
+}
 
 export interface EditorProps {
     // DOM
     className?: string;
     style?: CSSProperties;
 
-    // CodeMirror Config
-    extensions?: Extension[];
+    // Language
     language?: LanguageDescription;
 
     // Options
@@ -107,170 +56,84 @@ export interface EditorProps {
 
 export default function Editor(props: EditorProps) {
     const { theme } = useAppearance();
-    const [appearanceConfig] = useState(new Compartment());
     const ref = useRef<HTMLDivElement>(null);
 
-    const [view, setView] = useState<EditorView>();
+    const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>();
 
-    const [languageConfig] = useState(new Compartment());
+    // The save command is registered once, so it reads the latest callback through a ref.
+    const onContentSaved = useRef(props.onContentSaved);
+    onContentSaved.current = props.onContentSaved;
 
-    const [keybindings] = useState(new Compartment());
-
-    const [languageSupport, setLanguageSupport] = useState<LanguageSupport>();
-
-    const createEditorState = useCallback(
-        () =>
-            EditorState.create({
-                doc: props.initialContent,
-                extensions: [
-                    defaultExtensions,
-                    appearanceConfig.of([]),
-                    props.extensions === undefined ? [] : props.extensions,
-                    languageConfig.of(languageSupport ?? []),
-                    keybindings.of([]),
-                ],
-            }),
-        [props.initialContent, props.extensions, languageSupport, languageConfig, keybindings, appearanceConfig],
-    );
-
+    // biome-ignore lint/correctness/useExhaustiveDependencies: the editor is created once; theme changes go through setTheme.
     useEffect(() => {
         if (ref.current === null) {
             return;
         }
 
-        if (view === undefined) {
-            const __editorView = new EditorView({
-                state: createEditorState(),
-                parent: ref.current,
-            });
-            setView(__editorView);
-        } else {
-            // Fully replace the state whenever the initial content changes, this prevents any unrelated
-            // history (for undo and redo) from being tracked.
-            view.setState(createEditorState());
-        }
+        const __editor = monaco.editor.create(ref.current, {
+            theme: theme === 'dark' ? 'vs-dark' : 'vs',
+            automaticLayout: true,
+            fontSize: 13,
+            fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
+            // Spaces, not a literal tab. Game configs (yaml, json, properties) almost all want this,
+            // and files that already use tabs are detected and left alone.
+            tabSize: 4,
+            insertSpaces: true,
+            wordWrap: 'on',
+            renderWhitespace: 'boundary',
+        });
+        __editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => onContentSaved.current?.());
+        setEditor(__editor);
 
         return () => {
-            if (view === undefined) {
-                return;
-            }
-
-            view.destroy();
-            setView(undefined);
+            __editor.dispose();
+            setEditor(undefined);
         };
-    }, [view, createEditorState]);
-
-    // biome-ignore lint/correctness/useExhaustiveDependencies: setState replaces the compartments when createEditorState changes.
-    useEffect(() => {
-        view?.dispatch({
-            effects: appearanceConfig.reconfigure(
-                theme === 'dark'
-                    ? [ayuMirageTheme, syntaxHighlighting(ayuMirageHighlightStyle)]
-                    : [
-                          EditorView.theme(
-                              {
-                                  '&': {
-                                      color: 'var(--color-primary)',
-                                      backgroundColor: 'var(--color-bg-raised)',
-                                      height: '100%',
-                                      fontSize: '13px',
-                                  },
-                                  '.cm-scroller': {
-                                      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace',
-                                      lineHeight: '1.5',
-                                      overflow: 'auto',
-                                  },
-                                  '.cm-gutters': {
-                                      color: 'var(--color-secondary)',
-                                      backgroundColor: 'var(--color-bg-lowered)',
-                                      border: 'none',
-                                  },
-                              },
-                              { dark: false },
-                          ),
-                          syntaxHighlighting(defaultHighlightStyle),
-                      ],
-            ),
-        });
-    }, [view, theme, appearanceConfig, createEditorState]);
+    }, []);
 
     useEffect(() => {
-        if (view === undefined) {
+        monaco.editor.setTheme(theme === 'dark' ? 'vs-dark' : 'vs');
+    }, [theme]);
+
+    useEffect(() => {
+        // setValue clears undo history and moves the cursor, so skip it when a save hands back the same content.
+        const content = props.initialContent ?? '';
+        if (editor !== undefined && editor.getValue() !== content) {
+            editor.setValue(content);
+        }
+    }, [editor, props.initialContent]);
+
+    useEffect(() => {
+        if (editor === undefined) {
             return;
         }
 
         const language = props.language ?? findLanguageByFilename(props.filename ?? '');
-        if (language === undefined) {
-            return;
+        const model = editor.getModel();
+        if (model !== null) {
+            monaco.editor.setModelLanguage(model, toMonacoLanguage(language));
         }
 
-        void language.load().then((support) => {
-            setLanguageSupport(support);
-        });
-
-        if (props.onLanguageChanged !== undefined) {
+        if (language !== undefined && props.onLanguageChanged !== undefined) {
             props.onLanguageChanged(language);
         }
-    }, [view, props.filename, props.language, props.onLanguageChanged]);
+    }, [editor, props.filename, props.language, props.onLanguageChanged]);
 
-    useEffect(() => {
-        if (languageSupport === undefined || view === undefined) {
-            return;
-        }
-
-        view.dispatch({
-            effects: languageConfig.reconfigure(languageSupport),
-        });
-    }, [view, languageSupport, languageConfig.reconfigure]);
-
+    // Runs on every render: callers keep the callback in a plain variable that is reset each render.
     useEffect(() => {
         if (props.fetchContent === undefined) {
             return;
         }
 
-        if (!view) {
+        if (!editor) {
             props.fetchContent(async () => {
                 throw new Error('no editor session has been configured');
             });
             return;
         }
 
-        view.dispatch({
-            scrollIntoView: true,
-        });
-    }, [view, props.fetchContent]);
-
-    useEffect(() => {
-        if (props.fetchContent === undefined) {
-            return;
-        }
-
-        if (!view) {
-            props.fetchContent(async () => {
-                throw new Error('no editor session has been configured');
-            });
-            return;
-        }
-
-        const { onContentSaved } = props;
-        if (onContentSaved !== undefined) {
-            view.dispatch({
-                effects: keybindings.reconfigure(
-                    keymap.of([
-                        {
-                            key: 'Mod-s',
-                            run() {
-                                onContentSaved();
-                                return true;
-                            },
-                        },
-                    ]),
-                ),
-            });
-        }
-
-        props.fetchContent(async () => view.state.doc.toJSON().join('\n'));
-    }, [view, props.fetchContent, props.onContentSaved, props, keybindings.reconfigure]);
+        props.fetchContent(async () => editor.getValue());
+    }, [editor, props]);
 
     return <div ref={ref} className={props.className} style={props.style} />;
 }

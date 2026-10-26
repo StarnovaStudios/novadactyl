@@ -53,6 +53,7 @@
         "formik": "^2.4.6",
         "laravel-vite-plugin": "^2.0.0",
         "million": "^3.1.11",
+        "monaco-editor": "^0.57.0",
         "motion": "^12.23.12",
         "pathe": "^2.0.3",
         "qrcode.react": "^4.2.0",
