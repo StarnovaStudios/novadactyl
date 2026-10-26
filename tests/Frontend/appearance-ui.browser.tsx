@@ -1,5 +1,5 @@
 import '@/assets/tailwind.css';
-import { EditorView } from '@codemirror/view';
+import * as monaco from 'monaco-editor';
 import { type AxiosAdapter, AxiosError, AxiosHeaders, type InternalAxiosRequestConfig } from 'axios';
 import { createStore, StoreProvider } from 'easy-peasy';
 import { act, type ReactNode, useEffect, useRef, useState } from 'react';
@@ -1056,15 +1056,12 @@ async function run() {
         );
         localStorage.setItem('appearance-fixture-unrelated', 'preserve');
         verifyAppearanceRadioGroups();
-        const editorElement = document.querySelector('.cm-editor') as HTMLElement;
-        assert(
-            getComputedStyle(editorElement).color === 'rgb(203, 204, 198)',
-            'The editor uses its dark theme on first mount',
-        );
-        const editor = EditorView.findFromDOM(editorElement);
+        const editorElement = document.querySelector('.monaco-editor') as HTMLElement;
+        assert(editorElement.classList.contains('vs-dark'), 'The editor uses its dark theme on first mount');
+        const editor = monaco.editor.getEditors()[0];
         if (!editor) throw new Error('Editor did not mount');
         await act(async () => {
-            editor.dispatch({ changes: { from: 0, to: editor.state.doc.length, insert: 'unsaved-port=25566' } });
+            editor.setValue('unsaved-port=25566');
         });
         const consoleElement = document.querySelector('.xterm');
         assert(Boolean(consoleElement), 'The real terminal mounts');
@@ -1079,7 +1076,7 @@ async function run() {
             'Integrated header toggle preserves unsaved editor content',
         );
         assert(
-            document.querySelector('.cm-editor') === editorElement,
+            document.querySelector('.monaco-editor') === editorElement,
             'Integrated header toggle preserves the editor instance',
         );
         assert(
@@ -1239,7 +1236,7 @@ async function run() {
             'Input state survives theme changes',
         );
         assert((await getContent?.()) === 'unsaved-port=25566', 'Unsaved editor content survives theme changes');
-        assert(document.querySelector('.cm-editor') === editorElement, 'The editor instance survives theme changes');
+        assert(document.querySelector('.monaco-editor') === editorElement, 'The editor instance survives theme changes');
         assert(document.querySelector('.xterm') === consoleElement, 'The terminal instance survives theme changes');
         assert(commandInput.value === 'say unsaved command', 'The unsent console command survives theme changes');
         assert(

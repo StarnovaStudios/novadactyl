@@ -1,0 +1,47 @@
+name: Novadactyl Image
+
+# Tag novadactyl-vX.Y.Z (the upstream release the branch is based on) to publish
+# ghcr.io/starnovastudios/novadactyl:vX.Y.Z and :latest.
+on:
+  push:
+    tags:
+      - 'novadactyl-v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: tag
+        run: echo "tag=${GITHUB_REF_NAME#novadactyl-}" >> "$GITHUB_OUTPUT"
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # amd64 only: guardian is the only consumer.
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/starnovastudios/novadactyl:${{ steps.tag.outputs.tag }}
+            ghcr.io/starnovastudios/novadactyl:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

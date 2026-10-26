@@ -165,7 +165,7 @@ const FileEditContainer = () => {
                 }}
             />
 
-            <div className='relative min-h-0 flex-1 bg-[#ffffff11] border-[1px] border-[#ffffff07] border-t-0 [&>div]:h-full [&_.cm-editor]:h-full [&_.cm-editor]:outline-hidden! w-full order-20 lg:order-none'>
+            <div className='relative min-h-0 flex-1 bg-[#ffffff11] border-[1px] border-[#ffffff07] border-t-0 [&>div]:h-full w-full order-20 lg:order-none'>
                 <Editor
                     filename={filename}
                     initialContent={content}
