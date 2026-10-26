@@ -2646,6 +2646,12 @@
             "activity": "Activity",
             "software": "Software",
             "installer": "Installer"
+        },
+        "island": {
+            "close_console": "Close console",
+            "expand": "Expand server bar",
+            "minimize": "Minimize server bar",
+            "open_console": "Open console"
         }
     },
     "setup": {

@@ -211,8 +211,12 @@ const Console = () => {
     };
 
     const handleGlobalKeyDown = useCallback((e: KeyboardEvent) => {
-        // Focus input when slash key is pressed
-        if (e.key === '/' && inputRef.current && document.activeElement !== inputRef.current) {
+        // Focus input when slash key is pressed, unless the user is typing somewhere else
+        // (the console can be open in the server island while another page's editor has focus).
+        const typingElsewhere = (e.target as HTMLElement | null)?.closest?.(
+            'input, textarea, select, [contenteditable="true"]',
+        );
+        if (e.key === '/' && inputRef.current && !typingElsewhere) {
             e.preventDefault();
             inputRef.current.focus();
         }

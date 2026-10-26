@@ -42,6 +42,7 @@ import MobileSidebar from '@/components/layout/sidebar/MobileSidebar';
 import Sidebar from '@/components/layout/sidebar/Sidebar';
 import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
 import InstallListener from '@/components/server/InstallListener';
+import ServerIsland from '@/components/server/ServerIsland';
 import TransferListener from '@/components/server/TransferListener';
 import WebsocketHandler from '@/components/server/WebsocketHandler';
 import { HeaderProvider } from '@/contexts/HeaderContext';
@@ -374,6 +375,7 @@ const UnifiedRouter = () => {
                                     <InstallListener />
                                     <TransferListener />
                                     <WebsocketHandler />
+                                    <ServerIsland />
                                 </>
                             )}
 
