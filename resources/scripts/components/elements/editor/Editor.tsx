@@ -80,7 +80,7 @@ export default function Editor(props: EditorProps) {
             tabSize: 4,
             insertSpaces: true,
             wordWrap: 'on',
-            renderWhitespace: 'boundary',
+            renderWhitespace: 'none',
         });
         __editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => onContentSaved.current?.());
         setEditor(__editor);
