@@ -1,3 +1,4 @@
+import { MotionGlobalConfig } from 'motion/react';
 import { createContext, type ReactNode, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import {
     type Appearance,
@@ -34,6 +35,8 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
 
     useLayoutEffect(() => {
         applyAppearance(preferences, systemDark);
+        // CSS can't reach animations driven by the motion library, so skip those globally too.
+        MotionGlobalConfig.skipAnimations = !preferences.animations;
         document
             .querySelector('meta[name="theme-color"]')
             ?.setAttribute('content', getComputedStyle(document.documentElement).backgroundColor);

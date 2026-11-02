@@ -40,6 +40,7 @@ Novadactyl tracks upstream Hydrodactyl releases and adds a few changes on top:
 - **Server island** — a floating bar at the bottom of every server page except the console, with the server's name and status, live stats, power actions, and a console you can pop out without leaving the page.
 - **Server switcher** — a dropdown at the top of the sidebar on server pages jumps to any of your other servers, listed under your server groups.
 - **File search** — Cmd/Ctrl+K fuzzy-searches the server's files and folders and jumps straight to the folder or the editor.
+- **Animations toggle** — turn off Animations under Account → Appearance to skip every transition and animation, so the panel responds instantly. Saved per browser.
 
 ### Docker image
 

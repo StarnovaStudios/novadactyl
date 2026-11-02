@@ -7,6 +7,7 @@
         root.dataset.theme = mode === 'system' ? (window.matchMedia?.('(prefers-color-scheme: dark)').matches === false ? 'light' : 'dark') : mode;
         root.dataset.accent = ['panel', 'blue', 'green', 'violet', 'orange', 'rose'].includes(saved?.accent) ? saved.accent : 'panel';
         root.dataset.palette = ['neutral', 'obsidian', 'dracula', 'nord', 'red', 'blue', 'yellow', 'green', 'violet', 'mocha'].includes(saved?.palette) ? saved.palette : 'neutral';
+        root.dataset.animations = saved?.animations === false ? 'off' : 'on';
         root.style.colorScheme = root.dataset.theme;
     })();
 </script>
@@ -15,5 +16,12 @@
         --color-bg: #fafafa;
         --color-canvas: #fafafa;
         --color-primary: #27272a;
+    }
+    html[data-animations="off"] *, html[data-animations="off"] *::before, html[data-animations="off"] *::after {
+        animation-duration: 0s !important;
+        animation-delay: 0s !important;
+        transition-duration: 0s !important;
+        transition-delay: 0s !important;
+        scroll-behavior: auto !important;
     }
 </style>

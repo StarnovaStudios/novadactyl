@@ -1,5 +1,6 @@
 import { Checkmark } from '@carbon/icons-react';
 import ContentBox from '@/components/elements/ContentBox';
+import { Switch } from '@/components/elements/SwitchV2';
 import { useAppearance } from '@/contexts/AppearanceContext';
 import { useTranslation } from '@/i18n/I18nProvider';
 import { type Appearance, type AppearanceMode, appearanceAccents, appearancePalettes } from '@/lib/appearance';
@@ -119,6 +120,22 @@ export default function AppearanceSettings() {
                         ))}
                     </div>
                 </fieldset>
+                <div className='flex items-center justify-between gap-4'>
+                    <div>
+                        <label htmlFor='appearance-animations' className='text-sm font-medium'>
+                            {t('appearance.animations')}
+                        </label>
+                        <p id='appearance-animations-description' className='text-xs text-secondary'>
+                            {t('appearance.animations_description')}
+                        </p>
+                    </div>
+                    <Switch
+                        id='appearance-animations'
+                        aria-describedby='appearance-animations-description'
+                        checked={preferences.animations}
+                        onCheckedChange={(animations) => updateAppearance({ animations })}
+                    />
+                </div>
             </div>
             {!persistent && (
                 <p role='status' className='mt-4 text-sm text-secondary'>

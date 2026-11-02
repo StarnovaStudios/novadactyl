@@ -27,6 +27,7 @@ export interface Appearance {
     mode: AppearanceMode;
     accent: keyof typeof appearanceAccents;
     palette: keyof typeof appearancePalettes;
+    animations: boolean;
 }
 
 export function parseAppearance(value: string | null): Appearance {
@@ -46,6 +47,7 @@ export function parseAppearance(value: string | null): Appearance {
             typeof saved?.palette === 'string' && Object.hasOwn(appearancePalettes, saved.palette)
                 ? saved.palette
                 : 'neutral',
+        animations: saved?.animations !== false,
     };
 }
 
@@ -79,6 +81,7 @@ export function applyAppearance(
     root.dataset.theme = theme;
     root.dataset.accent = preferences.accent;
     root.dataset.palette = preferences.palette;
+    root.dataset.animations = preferences.animations ? 'on' : 'off';
     root.style.colorScheme = theme;
     return theme;
 }
