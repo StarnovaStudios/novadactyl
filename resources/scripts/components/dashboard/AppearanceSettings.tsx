@@ -1,6 +1,5 @@
 import { Checkmark } from '@carbon/icons-react';
 import ContentBox from '@/components/elements/ContentBox';
-import { Switch } from '@/components/elements/SwitchV2';
 import { useAppearance } from '@/contexts/AppearanceContext';
 import { useTranslation } from '@/i18n/I18nProvider';
 import { type Appearance, type AppearanceMode, appearanceAccents, appearancePalettes } from '@/lib/appearance';
@@ -120,22 +119,27 @@ export default function AppearanceSettings() {
                         ))}
                     </div>
                 </fieldset>
-                <div className='flex items-center justify-between gap-4'>
-                    <div>
-                        <label htmlFor='appearance-animations' className='text-sm font-medium'>
-                            {t('appearance.animations')}
-                        </label>
-                        <p id='appearance-animations-description' className='text-xs text-secondary'>
-                            {t('appearance.animations_description')}
-                        </p>
+                <fieldset aria-describedby='appearance-animations-description'>
+                    <legend className='text-sm font-medium'>{t('appearance.animations')}</legend>
+                    <p id='appearance-animations-description' className='mb-2 text-xs text-secondary'>
+                        {t('appearance.animations_description')}
+                    </p>
+                    <div className='flex flex-wrap gap-2'>
+                        {(['full', 'reduced', 'off'] as const).map((value) => (
+                            <label key={value} className={`${choiceClass} flex-1 sm:flex-none`}>
+                                <input
+                                    className={radioClass}
+                                    type='radio'
+                                    name='appearance-animations'
+                                    value={value}
+                                    checked={preferences.animations === value}
+                                    onChange={() => updateAppearance({ animations: value })}
+                                />
+                                {t(`appearance.animations_${value}`)}
+                            </label>
+                        ))}
                     </div>
-                    <Switch
-                        id='appearance-animations'
-                        aria-describedby='appearance-animations-description'
-                        checked={preferences.animations}
-                        onCheckedChange={(animations) => updateAppearance({ animations })}
-                    />
-                </div>
+                </fieldset>
             </div>
             {!persistent && (
                 <p role='status' className='mt-4 text-sm text-secondary'>

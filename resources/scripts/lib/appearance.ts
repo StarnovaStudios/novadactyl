@@ -23,11 +23,12 @@ export const appearancePalettes = {
 } as const;
 
 export type AppearanceMode = 'dark' | 'light' | 'system';
+export type AnimationLevel = 'full' | 'reduced' | 'off';
 export interface Appearance {
     mode: AppearanceMode;
     accent: keyof typeof appearanceAccents;
     palette: keyof typeof appearancePalettes;
-    animations: boolean;
+    animations: AnimationLevel;
 }
 
 export function parseAppearance(value: string | null): Appearance {
@@ -47,7 +48,13 @@ export function parseAppearance(value: string | null): Appearance {
             typeof saved?.palette === 'string' && Object.hasOwn(appearancePalettes, saved.palette)
                 ? saved.palette
                 : 'neutral',
-        animations: saved?.animations !== false,
+        // Booleans come from v6.4.2-7, which only had on/off.
+        animations:
+            saved?.animations === 'reduced' || saved?.animations === 'off'
+                ? saved.animations
+                : (saved?.animations as unknown) === false
+                  ? 'off'
+                  : 'full',
     };
 }
 
@@ -81,7 +88,7 @@ export function applyAppearance(
     root.dataset.theme = theme;
     root.dataset.accent = preferences.accent;
     root.dataset.palette = preferences.palette;
-    root.dataset.animations = preferences.animations ? 'on' : 'off';
+    root.dataset.animations = preferences.animations;
     root.style.colorScheme = theme;
     return theme;
 }

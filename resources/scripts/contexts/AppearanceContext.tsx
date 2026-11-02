@@ -1,4 +1,4 @@
-import { MotionGlobalConfig } from 'motion/react';
+import { MotionConfig, MotionGlobalConfig } from 'motion/react';
 import { createContext, type ReactNode, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import {
     type Appearance,
@@ -36,7 +36,7 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
     useLayoutEffect(() => {
         applyAppearance(preferences, systemDark);
         // CSS can't reach animations driven by the motion library, so skip those globally too.
-        MotionGlobalConfig.skipAnimations = !preferences.animations;
+        MotionGlobalConfig.skipAnimations = preferences.animations === 'off';
         document
             .querySelector('meta[name="theme-color"]')
             ?.setAttribute('content', getComputedStyle(document.documentElement).backgroundColor);
@@ -62,7 +62,10 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
 
     return (
         <AppearanceContext.Provider value={{ preferences, theme, persistent, updateAppearance }}>
-            {children}
+            {/* Reduced keeps motion's opacity fades but drops its transform and layout animations. */}
+            <MotionConfig reducedMotion={preferences.animations === 'reduced' ? 'always' : 'never'}>
+                {children}
+            </MotionConfig>
         </AppearanceContext.Provider>
     );
 }

@@ -18,13 +18,13 @@ test('stores the application palette independently from accent and brightness', 
         mode: 'light',
         accent: 'green',
         palette: 'blue',
-        animations: true,
+        animations: 'full',
     });
     assert.deepEqual(parseAppearance('{"mode":"system","accent":"rose","animations":false}'), {
         mode: 'system',
         accent: 'rose',
         palette: 'neutral',
-        animations: false,
+        animations: 'off',
     });
 });
 
@@ -44,14 +44,14 @@ test('defaults to dark and the panel accent, including corrupt or unsupported sa
             mode: 'dark',
             accent: 'panel',
             palette: 'neutral',
-            animations: true,
+            animations: 'full',
         });
     }
     assert.deepEqual(parseAppearance('{"mode":"light","accent":"unknown","palette":"__proto__"}'), {
         mode: 'light',
         accent: 'panel',
         palette: 'neutral',
-        animations: true,
+        animations: 'full',
     });
 });
 
@@ -61,7 +61,12 @@ test('round trips every mode and accent through browser storage', () => {
     for (const mode of ['dark', 'light', 'system']) {
         for (const accent of Object.keys(appearanceAccents)) {
             for (const palette of Object.keys(appearancePalettes)) {
-                const preferences = { mode, accent, palette, animations: palette !== 'red' };
+                const preferences = {
+                    mode,
+                    accent,
+                    palette,
+                    animations: ['full', 'reduced', 'off'][palette.length % 3],
+                };
                 assert.equal(saveAppearance(preferences, storage), true);
                 assert.deepEqual(readAppearance(storage), preferences);
                 assert.deepEqual(JSON.parse(values.get(appearanceStorageKey)), preferences);
@@ -79,8 +84,20 @@ test('unavailable storage does not prevent changing appearance', () => {
             throw new Error('QuotaExceededError');
         },
     };
-    assert.deepEqual(readAppearance(storage), { mode: 'dark', accent: 'panel', palette: 'neutral', animations: true });
+    assert.deepEqual(readAppearance(storage), {
+        mode: 'dark',
+        accent: 'panel',
+        palette: 'neutral',
+        animations: 'full',
+    });
     assert.equal(saveAppearance({ mode: 'light', accent: 'blue', palette: 'red' }, storage), false);
+});
+
+test('keeps on/off animation choices saved by v6.4.2-7', () => {
+    assert.equal(parseAppearance('{"animations":false}').animations, 'off');
+    assert.equal(parseAppearance('{"animations":true}').animations, 'full');
+    assert.equal(parseAppearance('{"animations":"reduced"}').animations, 'reduced');
+    assert.equal(parseAppearance('{"animations":"slow"}').animations, 'full');
 });
 
 test('only system mode follows the browser preference', () => {
@@ -94,14 +111,14 @@ test('only system mode follows the browser preference', () => {
 test('applies theme and accent without overwriting the server brand color', () => {
     const root = { dataset: {}, style: { colorScheme: '', '--brand-color': '#123456' } };
     assert.equal(
-        applyAppearance({ mode: 'system', accent: 'green', palette: 'blue', animations: false }, false, root),
+        applyAppearance({ mode: 'system', accent: 'green', palette: 'blue', animations: 'reduced' }, false, root),
         'light',
     );
-    assert.deepEqual(root.dataset, { theme: 'light', accent: 'green', palette: 'blue', animations: 'off' });
+    assert.deepEqual(root.dataset, { theme: 'light', accent: 'green', palette: 'blue', animations: 'reduced' });
     assert.equal(root.style.colorScheme, 'light');
     assert.equal(root.style['--brand-color'], '#123456');
-    applyAppearance({ mode: 'dark', accent: 'panel', palette: 'red', animations: true }, false, root);
-    assert.equal(root.dataset.animations, 'on');
+    applyAppearance({ mode: 'dark', accent: 'panel', palette: 'red', animations: 'full' }, false, root);
+    assert.equal(root.dataset.animations, 'full');
     assert.equal(root.dataset.theme, 'dark');
     assert.equal(root.dataset.accent, 'panel');
     assert.equal(root.dataset.palette, 'red');
@@ -117,7 +134,8 @@ test('the pre-paint bootstrap agrees with runtime validation for all preferences
     for (const mode of ['dark', 'light', 'system']) {
         for (const accent of Object.keys(appearanceAccents)) {
             values.push(JSON.stringify({ mode, accent }));
-            values.push(JSON.stringify({ mode, accent, animations: false }));
+            for (const animations of [false, true, 'full', 'reduced', 'off', 'bogus'])
+                values.push(JSON.stringify({ mode, accent, animations }));
             for (const palette of Object.keys(appearancePalettes))
                 values.push(JSON.stringify({ mode, accent, palette }));
         }
@@ -134,7 +152,7 @@ test('the pre-paint bootstrap agrees with runtime validation for all preferences
             assert.equal(root.dataset.theme, resolveTheme(expected.mode, systemDark));
             assert.equal(root.dataset.accent, expected.accent);
             assert.equal(root.dataset.palette, expected.palette);
-            assert.equal(root.dataset.animations, expected.animations ? 'on' : 'off');
+            assert.equal(root.dataset.animations, expected.animations);
             assert.equal(root.style.colorScheme, root.dataset.theme);
         }
     }
