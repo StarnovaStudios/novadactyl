@@ -222,6 +222,14 @@
             "description": "Elige el idioma que se usa en todo el panel.",
             "update_failed": "No se pudo actualizar tu preferencia de idioma."
         },
+        "name": {
+            "title": "Perfil",
+            "first_name_label": "Nombre",
+            "last_name_label": "Apellidos",
+            "first_name_required": "El nombre es obligatorio.",
+            "submit": "Actualizar nombre",
+            "updated": "Tu nombre se ha actualizado."
+        },
         "overview": {
             "commit_label": "Commit:",
             "email_title": "Correo electrónico de la cuenta",
@@ -1403,21 +1411,18 @@
         },
         "sort": {
             "aria": "Ordenar servidores",
+            "aria_direction": "Dirección del orden: {{direction}}",
             "aria_sorted": "Orden: {{sort}}",
+            "ascending": "Ascendente",
             "clear": "Limpiar orden",
-            "cpu_asc": "CPU ↑",
-            "cpu_desc": "CPU ↓",
-            "disk_asc": "Disco ↑",
-            "disk_desc": "Disco ↓",
+            "cpu": "CPU",
+            "created_at": "Fecha de creación",
+            "descending": "Descendente",
+            "disk": "Disco",
             "label": "Ordenar",
-            "memory_asc": "Memoria ↑",
-            "memory_desc": "Memoria ↓",
-            "name_asc": "A → Z",
-            "name_desc": "Z → A",
-            "newest": "Más recientes → más antiguos",
-            "oldest": "Más antiguos → más recientes",
-            "status_asc": "Estado ▲",
-            "status_desc": "Estado ▼"
+            "memory": "Memoria",
+            "name": "Nombre",
+            "status": "Estado"
         },
         "title": "Panel de control",
         "view": {
@@ -2176,6 +2181,10 @@
                 "safety_options": "Opciones de seguridad",
                 "select_image": "Selecciona una imagen...",
                 "startup_command": "Comando de inicio",
+                "startup_command_forbidden": "Tu rol no puede editar el comando de inicio. Usa el comando por defecto del huevo para continuar.",
+                "missing_permissions": "Faltan permisos para cambiar el software.",
+                "missing_backup_permission": "Necesitas permiso para crear copias de seguridad para usar esta opción.",
+                "missing_file_permission": "Necesitas permisos de archivos para borrar archivos.",
                 "startup_placeholder": "Introduce un comando de inicio personalizado...",
                 "title": "Configurar {{egg}}",
                 "use_variables": "Usa variables como {{variables}}",

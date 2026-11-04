@@ -227,6 +227,14 @@
             "description": "Choose the language used across the panel.",
             "update_failed": "Failed to update your language preference."
         },
+        "name": {
+            "title": "Profile",
+            "first_name_label": "First Name",
+            "last_name_label": "Last Name",
+            "first_name_required": "First name is required.",
+            "submit": "Update Name",
+            "updated": "Your name has been updated."
+        },
         "overview": {
             "commit_label": "Commit:",
             "email_title": "Account Email",
@@ -1408,21 +1416,18 @@
         },
         "sort": {
             "aria": "Sort servers",
+            "aria_direction": "Sort direction: {{direction}}",
             "aria_sorted": "Sort: {{sort}}",
+            "ascending": "Ascending",
             "clear": "Clear Sort",
-            "cpu_asc": "CPU ↑",
-            "cpu_desc": "CPU ↓",
-            "disk_asc": "Disk ↑",
-            "disk_desc": "Disk ↓",
+            "cpu": "CPU",
+            "created_at": "Created",
+            "descending": "Descending",
+            "disk": "Disk",
             "label": "Sort",
-            "memory_asc": "Memory ↑",
-            "memory_desc": "Memory ↓",
-            "name_asc": "A → Z",
-            "name_desc": "Z → A",
-            "newest": "Newest → Oldest",
-            "oldest": "Oldest → Newest",
-            "status_asc": "Status ▲",
-            "status_desc": "Status ▼"
+            "memory": "Memory",
+            "name": "Name",
+            "status": "Status"
         },
         "title": "Dashboard",
         "view": {
@@ -2181,6 +2186,10 @@
                 "safety_options": "Safety Options",
                 "select_image": "Select image...",
                 "startup_command": "Startup Command",
+                "startup_command_forbidden": "Your role cannot edit the startup command. Use the egg default to continue.",
+                "missing_permissions": "Missing permissions to change software.",
+                "missing_backup_permission": "You need permission to create backups to use this option.",
+                "missing_file_permission": "You need file permissions to wipe files.",
                 "startup_placeholder": "Enter custom startup command...",
                 "title": "Configure {{egg}}",
                 "use_variables": "Use variables like {{variables}}",

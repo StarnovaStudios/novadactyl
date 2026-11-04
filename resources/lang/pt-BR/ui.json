@@ -222,6 +222,14 @@
             "description": "Escolha o idioma usado no painel.",
             "update_failed": "Não foi possível atualizar sua preferência de idioma."
         },
+        "name": {
+            "title": "Perfil",
+            "first_name_label": "Nome",
+            "last_name_label": "Sobrenome",
+            "first_name_required": "O nome é obrigatório.",
+            "submit": "Atualizar nome",
+            "updated": "Seu nome foi atualizado."
+        },
         "overview": {
             "commit_label": "Commit:",
             "email_title": "E-mail da conta",
@@ -1403,21 +1411,18 @@
         },
         "sort": {
             "aria": "Ordenar servidores",
+            "aria_direction": "Direção da ordenação: {{direction}}",
             "aria_sorted": "Ordenação: {{sort}}",
+            "ascending": "Crescente",
             "clear": "Limpar ordenação",
-            "cpu_asc": "CPU ↑",
-            "cpu_desc": "CPU ↓",
-            "disk_asc": "Disco ↑",
-            "disk_desc": "Disco ↓",
+            "cpu": "CPU",
+            "created_at": "Data de criação",
+            "descending": "Decrescente",
+            "disk": "Disco",
             "label": "Ordenar",
-            "memory_asc": "Memória ↑",
-            "memory_desc": "Memória ↓",
-            "name_asc": "A → Z",
-            "name_desc": "Z → A",
-            "newest": "Mais recentes → Mais antigos",
-            "oldest": "Mais antigos → Mais recentes",
-            "status_asc": "Status ▲",
-            "status_desc": "Status ▼"
+            "memory": "Memória",
+            "name": "Nome",
+            "status": "Status"
         },
         "title": "Visão geral",
         "view": {
@@ -2247,6 +2252,10 @@
                 "safety_options": "Opções de segurança",
                 "select_image": "Selecione uma imagem...",
                 "startup_command": "Comando de inicialização",
+                "startup_command_forbidden": "Seu cargo não pode editar o comando de inicialização. Use o comando padrão do egg para continuar.",
+                "missing_permissions": "Faltam permissões para alterar o software.",
+                "missing_backup_permission": "Você precisa de permissão para criar backups para usar esta opção.",
+                "missing_file_permission": "Você precisa de permissões de arquivo para apagar arquivos.",
                 "startup_placeholder": "Digite um comando de inicialização personalizado...",
                 "title": "Configurar {{egg}}",
                 "use_variables": "Use variáveis como {{variables}}",

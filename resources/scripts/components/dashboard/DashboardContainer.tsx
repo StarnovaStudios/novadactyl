@@ -45,6 +45,7 @@ const DashboardContainer = () => {
     const defaultPage = Number(new URLSearchParams(search).get('page') || '1');
 
     const [page, setPage] = useState(!Number.isNaN(defaultPage) && defaultPage > 0 ? defaultPage : 1);
+    const pageScrollRef = useRef<HTMLDivElement>(null);
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const uuid = useStoreState((state) => state.user.data?.uuid);
     const rootAdmin = useStoreState((state) => state.user.data?.rootAdmin);
@@ -62,18 +63,12 @@ const DashboardContainer = () => {
 
     const sortPresets = useMemo<SortPreset[]>(
         () => [
-            { value: 'name', label: t('dashboard.sort.name_asc') },
-            { value: '-name', label: t('dashboard.sort.name_desc') },
-            { value: 'created_at', label: t('dashboard.sort.oldest') },
-            { value: '-created_at', label: t('dashboard.sort.newest') },
-            { value: 'status', label: t('dashboard.sort.status_asc') },
-            { value: '-status', label: t('dashboard.sort.status_desc') },
-            { value: 'memory', label: t('dashboard.sort.memory_asc') },
-            { value: '-memory', label: t('dashboard.sort.memory_desc') },
-            { value: 'disk', label: t('dashboard.sort.disk_asc') },
-            { value: '-disk', label: t('dashboard.sort.disk_desc') },
-            { value: 'cpu', label: t('dashboard.sort.cpu_asc') },
-            { value: '-cpu', label: t('dashboard.sort.cpu_desc') },
+            { value: 'name', label: t('dashboard.sort.name') },
+            { value: 'created_at', label: t('dashboard.sort.created_at') },
+            { value: 'status', label: t('dashboard.sort.status') },
+            { value: 'memory', label: t('dashboard.sort.memory') },
+            { value: 'disk', label: t('dashboard.sort.disk') },
+            { value: 'cpu', label: t('dashboard.sort.cpu') },
         ],
         [t],
     );
@@ -209,11 +204,7 @@ const DashboardContainer = () => {
 
     const viewTabs = useMemo(
         () => (
-            <Tabs
-                value={dashboardMode}
-                onValueChange={(v) => setDashboardMode(v as DashboardMode)}
-                className='md:block hidden'
-            >
+            <Tabs value={dashboardMode} onValueChange={(v) => setDashboardMode(v as DashboardMode)} className='block'>
                 <TabsList>
                     <TabsTrigger aria-label={t('dashboard.view.list_aria')} value='list'>
                         <svg
@@ -232,7 +223,7 @@ const DashboardContainer = () => {
                             />
                         </svg>
                     </TabsTrigger>
-                    <TabsTrigger aria-label={t('dashboard.view.grid_aria')} value='grid'>
+                    <TabsTrigger aria-label={t('dashboard.view.grid_aria')} value='grid' className='max-md:hidden'>
                         <svg
                             width='13'
                             height='14'
@@ -402,6 +393,7 @@ const DashboardContainer = () => {
 
     useEffect(() => {
         window.history.replaceState(null, document.title, `/${page <= 1 ? '' : `?page=${page}`}`);
+        pageScrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     }, [page]);
 
     useEffect(() => {
@@ -410,7 +402,7 @@ const DashboardContainer = () => {
     }, [error, clearAndAddHttpError, clearFlashes]);
 
     return (
-        <PageContentBlock title={t('dashboard.title')} showFlashKey={'dashboard'}>
+        <PageContentBlock ref={pageScrollRef} title={t('dashboard.title')} showFlashKey={'dashboard'}>
             {!servers ? null : (
                 <Pagination data={servers} onPageSelect={setPage}>
                     {({ items }) => {
@@ -432,6 +424,7 @@ const DashboardContainer = () => {
                                 displayOption={dashboardMode === 'grid' ? 'grid' : 'list'}
                                 groupFilterId={groupFilterId}
                                 filterActive={filterActive}
+                                currentPage={servers.pagination.currentPage}
                             />
                         ) : sortedItems.length > 0 ? (
                             <div

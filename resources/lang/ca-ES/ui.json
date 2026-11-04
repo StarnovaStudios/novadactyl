@@ -222,6 +222,14 @@
             "description": "Tria l'idioma que s'utilitza a tot el panell.",
             "update_failed": "No s'ha pogut actualitzar la teva preferència d'idioma."
         },
+        "name": {
+            "title": "Perfil",
+            "first_name_label": "Nom",
+            "last_name_label": "Cognoms",
+            "first_name_required": "El nom és obligatori.",
+            "submit": "Actualitza el nom",
+            "updated": "El teu nom s'ha actualitzat."
+        },
         "overview": {
             "commit_label": "Commit:",
             "email_title": "Correu electrònic del compte",
@@ -1403,21 +1411,18 @@
         },
         "sort": {
             "aria": "Ordena servidors",
+            "aria_direction": "Direcció d'ordenació: {{direction}}",
             "aria_sorted": "Ordenació: {{sort}}",
+            "ascending": "Ascendent",
             "clear": "Esborra l'ordenació",
-            "cpu_asc": "CPU ↑",
-            "cpu_desc": "CPU ↓",
-            "disk_asc": "Disc ↑",
-            "disk_desc": "Disc ↓",
+            "cpu": "CPU",
+            "created_at": "Data de creació",
+            "descending": "Descendent",
+            "disk": "Disc",
             "label": "Ordena",
-            "memory_asc": "Memòria ↑",
-            "memory_desc": "Memòria ↓",
-            "name_asc": "A → Z",
-            "name_desc": "Z → A",
-            "newest": "Més recents → Més antics",
-            "oldest": "Més antics → Més recents",
-            "status_asc": "Estat ▲",
-            "status_desc": "Estat ▼"
+            "memory": "Memòria",
+            "name": "Nom",
+            "status": "Estat"
         },
         "title": "Tauler",
         "view": {
@@ -2176,6 +2181,10 @@
                 "safety_options": "Opcions de seguretat",
                 "select_image": "Selecciona una imatge...",
                 "startup_command": "Ordre d'arrencada",
+                "startup_command_forbidden": "El teu rol no pot editar l'ordre d'arrencada. Fes servir l'ordre per defecte de l'ou per continuar.",
+                "missing_permissions": "Falten permisos per canviar el programari.",
+                "missing_backup_permission": "Necessites permís per crear còpies de seguretat per utilitzar aquesta opció.",
+                "missing_file_permission": "Necessites permisos de fitxers per esborrar fitxers.",
                 "startup_placeholder": "Introdueix una ordre d'arrencada personalitzada...",
                 "title": "Configura {{egg}}",
                 "use_variables": "Utilitza variables com ara {{variables}}",
